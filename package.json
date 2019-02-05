@@ -1,0 +1,21 @@
+{
+  "name": "parity-dev",
+  "version": "0.0.1",
+  "description": "Run a Parity node for development.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": "./cli.js",
+  "author": "vrde",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "commander": "^2.19.0",
+    "js-sha3": "^0.8.0",
+    "keythereum": "^1.0.4",
+    "secp256k1": "^3.6.2",
+    "tweetnacl": "^1.0.1",
+    "web3": "^1.0.0-beta.41",
+    "web3-utils": "^1.0.0-beta.41"
+  }
+}
