@@ -1,5 +1,5 @@
 {
-  "name": "DevelopmentChain",
+  "name": "devchain",
   "engine": {
     "instantSeal": null
   },
