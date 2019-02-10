@@ -11,7 +11,7 @@ ethnode
 
 `ethnode` automatically:
 - downloads the latest stable version of `geth` or `parity`
-- configures `geth` or `parity` to run in a single node network using the `clique` (Geth) or InstantSeal (Parity) consensus engine (transactions are processed **instantly**)
+- configures `geth` or `parity` to run in a single node network using the *clique* (Geth) or *InstantSeal* (Parity) consensus engine (transactions are processed **instantly**)
 - provides 10 unlocked accounts with 100ETH each
 - enables all RPC endpoints (personal, db, eth, net, web3, debug and more)
 - allows CORS from any domain (so you can use it with [remix][remix])
