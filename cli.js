@@ -6,7 +6,7 @@ const { spawnSync } = require("child_process");
 const program = require("commander");
 const run = require("./main2");
 
-const HOMEDIR = join(require("os").homedir(), ".parity-dev");
+const HOMEDIR = join(require("os").homedir(), ".ethnode");
 const PARITY_BIN = join(HOMEDIR, "parity");
 
 var noAction = true;
