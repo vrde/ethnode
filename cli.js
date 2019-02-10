@@ -4,7 +4,7 @@ const fs = require("fs");
 const { join } = require("path");
 const { spawnSync } = require("child_process");
 const program = require("commander");
-const run = require("./main2");
+const run = require("./main");
 
 const HOMEDIR = join(require("os").homedir(), ".ethnode");
 const PARITY_BIN = join(HOMEDIR, "parity");
@@ -13,7 +13,7 @@ var noAction = true;
 
 program
   .version("0.0.1")
-  .option("-w, --workdir <dir>", "Specify a working dir.", "parity-data");
+  .option("-w, --workdir <dir>", "Specify a working dir.", "ethnode-data");
 
 program
   .command("parity")

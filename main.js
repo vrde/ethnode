@@ -63,7 +63,7 @@ function setup(client, workdir) {
 
   if (!fs.existsSync(paths.binary)) {
     console.log(`Download latest ${client} version, please wait.`);
-    spawnSync(join(__dirname, `get_${client}.sh`), { stdio: "inherit" });
+    spawnSync(path.join(__dirname, `get_${client}.sh`), { stdio: "inherit" });
   }
 }
 
