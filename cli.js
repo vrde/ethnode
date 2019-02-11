@@ -5,6 +5,7 @@ const { join } = require("path");
 const { spawnSync } = require("child_process");
 const program = require("commander");
 const run = require("./main");
+const packageJson = require("./package.json");
 
 const HOMEDIR = join(require("os").homedir(), ".ethnode");
 const PARITY_BIN = join(HOMEDIR, "parity");
@@ -12,7 +13,7 @@ const PARITY_BIN = join(HOMEDIR, "parity");
 var noAction = true;
 
 program
-  .version("0.0.1")
+  .version(packageJson.version)
   .option("-w, --workdir <dir>", "Specify a working dir.", "ethnode-data");
 
 program
