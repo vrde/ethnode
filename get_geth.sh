@@ -11,5 +11,9 @@ VERSION=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/releases/lat
 COMMIT=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/commits/${VERSION} | python -c "import sys, json; print(json.load(sys.stdin)['sha'])")
 NAME="geth-${PLATFORM}-amd64-${VERSION:1}-${COMMIT:0:8}"
 DOWNLOAD_URL="https://gethstore.blob.core.windows.net/builds/${NAME}.tar.gz"
-curl ${DOWNLOAD_URL} | tar xzf - ${NAME}/geth -O > ${ETHNODE_HOME}/geth
+TMPDIR=$(mktemp -d) && cd ${TMPDIR}
+curl ${DOWNLOAD_URL} --output archive.tar.gz
+tar xzf archive.tar.gz ${NAME}/geth -O > ${ETHNODE_HOME}/geth
 chmod +x ${ETHNODE_HOME}/geth
+
+#curl ${DOWNLOAD_URL} | tar xzf - ${NAME}/geth -O > ${ETHNODE_HOME}/geth
