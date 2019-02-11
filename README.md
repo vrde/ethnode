@@ -41,3 +41,4 @@ Ganache sometimes is not enough.
 [parity:devchain]: https://wiki.parity.io/Private-development-chain
 [remix]: http://remix.ethereum.org/
 [geth-testnet]: https://hackernoon.com/setup-your-own-private-proof-of-authority-ethereum-network-with-geth-9a0a3750cda8
+[hudson:gas]: https://hudsonjameson.com/2017-06-27-accounts-transactions-gas-ethereum/
