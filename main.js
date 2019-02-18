@@ -8,7 +8,7 @@ const HOMEDIR = path.join(require("os").homedir(), ".ethnode");
 const KEYS_SOURCE = path.join(__dirname, "keys");
 
 function randomId() {
-  return numberToHex(1e9 + Math.round(Math.random() * 1e9));
+  return 1e9 + Math.round(Math.random() * 1e9);
 }
 
 function getPaths(client, workdir) {
@@ -23,12 +23,12 @@ function getPaths(client, workdir) {
   };
 }
 
-function generateGenesis(client, balances, networkId) {
+function generateGenesis(client, balances) {
   const genesis = JSON.parse(
     JSON.stringify(require(`./genesis.${client}.json`))
   );
   if (client === "geth") {
-    genesis.config.chainId = networkId;
+    genesis.config.chainId = randomId();
     genesis.extraData =
       "0x" +
       "0".repeat(64) +
@@ -36,7 +36,7 @@ function generateGenesis(client, balances, networkId) {
       "0".repeat(130);
     genesis.alloc = { ...genesis.alloc, ...balances };
   } else if (client === "parity") {
-    genesis.params.networkID = networkId;
+    genesis.params.networkID = randomId();
     genesis.accounts = { ...genesis.accounts, ...balances };
   }
   return genesis;
@@ -67,14 +67,10 @@ function setup(client, workdir) {
   }
 }
 
-function provide(client, workdir, networkId) {
+function provide(client, workdir) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
-  const genesis = generateGenesis(
-    client,
-    generateBalances(keypairs),
-    networkId
-  );
+  const genesis = generateGenesis(client, generateBalances(keypairs));
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
 
@@ -98,18 +94,24 @@ function provide(client, workdir, networkId) {
     );
 
   if (client === "geth") {
-    spawnSync(paths.binary, ["--datadir", paths.data, "init", paths.genesis], {
-      stdio: "inherit"
-    });
+    const childResult = spawnSync(
+      paths.binary,
+      ["--datadir", paths.data, "init", paths.genesis],
+      {
+        stdio: "inherit"
+      }
+    );
+    if (childResult.status !== 0) {
+      process.exit(childResult.status);
+    }
   }
 }
 
-function run(client, workdir, networkId) {
-  networkId = parseInt(networkId, 10) || randomId();
+function run(client, workdir) {
   const paths = getPaths(client, workdir);
   setup(client, workdir);
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir, networkId);
+    provide(client, workdir);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
@@ -131,9 +133,6 @@ function run(client, workdir, networkId) {
     args = [
       "--datadir",
       paths.data,
-      "--mine",
-      "--targetgaslimit",
-      "94000000",
       "--port",
       "30311",
       "--rpc",
@@ -143,10 +142,11 @@ function run(client, workdir, networkId) {
       "8545",
       "--rpcapi",
       "personal,db,eth,net,web3,txpool,miner,debug",
-      "--gasprice",
-      "4000000000",
-      "--targetgaslimit",
-      "4712388",
+      "--mine",
+      "--miner.gastarget",
+      "94000000",
+      "--miner.gasprice",
+      "1000000000",
       "--rpccorsdomain",
       "*",
       "--keystore",
@@ -156,7 +156,7 @@ function run(client, workdir, networkId) {
       "--password",
       paths.password,
       "--networkid",
-      networkId
+      genesis.config.chainId
     ];
   } else if (client === "parity") {
     args = [
@@ -178,7 +178,7 @@ function run(client, workdir, networkId) {
       "--password",
       paths.password,
       "--network-id",
-      networkId
+      parseInt(genesis.params.networkID, 16)
     ];
   } else {
     throw `Client "${client}" is not supported`;
