@@ -17,6 +17,10 @@ program
   .option("-w, --workdir <dir>", "Specify a working dir.", "ethnode-data");
 
 program
+  .version(packageJson.version)
+  .option("-n, --networkId <number>", "Specify a network ID.");
+
+program
   .command("parity")
   .description("Run a Parity development node.")
   .action(cmd => {
@@ -35,5 +39,5 @@ program
 program.parse(process.argv);
 
 if (noAction) {
-  run("geth", program.workdir);
+  run("geth", program.workdir, program.networkId);
 }
