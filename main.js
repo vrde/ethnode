@@ -23,12 +23,12 @@ function getPaths(client, workdir) {
   };
 }
 
-function generateGenesis(client, balances) {
+function generateGenesis(client, balances, networkId) {
   const genesis = JSON.parse(
     JSON.stringify(require(`./genesis.${client}.json`))
   );
   if (client === "geth") {
-    genesis.chainId = randomId();
+    genesis.config.chainId = networkId;
     genesis.extraData =
       "0x" +
       "0".repeat(64) +
@@ -36,7 +36,7 @@ function generateGenesis(client, balances) {
       "0".repeat(130);
     genesis.alloc = { ...genesis.alloc, ...balances };
   } else if (client === "parity") {
-    genesis.params.networkID = randomId();
+    genesis.params.networkID = networkId;
     genesis.accounts = { ...genesis.accounts, ...balances };
   }
   return genesis;
@@ -67,10 +67,14 @@ function setup(client, workdir) {
   }
 }
 
-function provide(client, workdir) {
+function provide(client, workdir, networkId) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
-  const genesis = generateGenesis(client, generateBalances(keypairs));
+  const genesis = generateGenesis(
+    client,
+    generateBalances(keypairs),
+    networkId
+  );
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
 
@@ -100,11 +104,12 @@ function provide(client, workdir) {
   }
 }
 
-function run(client, workdir) {
+function run(client, workdir, networkId) {
+  networkId = parseInt(networkId, 10) || randomId();
   const paths = getPaths(client, workdir);
   setup(client, workdir);
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir);
+    provide(client, workdir, networkId);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
@@ -149,7 +154,9 @@ function run(client, workdir) {
       "--unlock",
       keypairs.map(keypair => keypair.address).join(","),
       "--password",
-      paths.password
+      paths.password,
+      "--networkid",
+      networkId
     ];
   } else if (client === "parity") {
     args = [
@@ -159,7 +166,7 @@ function run(client, workdir) {
       paths.genesis,
       "--keys-path",
       paths.keys,
-      "--gasprice",
+      "--min-gas-price",
       "4000000000",
       "--jsonrpc-cors",
       "all",
@@ -169,7 +176,9 @@ function run(client, workdir) {
       "--unlock",
       keypairs.map(keypair => keypair.address).join(","),
       "--password",
-      paths.password
+      paths.password,
+      "--network-id",
+      networkId
     ];
   } else {
     throw `Client "${client}" is not supported`;

@@ -17,11 +17,15 @@ program
   .option("-w, --workdir <dir>", "Specify a working dir.", "ethnode-data");
 
 program
+  .version(packageJson.version)
+  .option("-n, --networkId <number>", "Specify a network ID.");
+
+program
   .command("parity")
   .description("Run a Parity development node.")
   .action(cmd => {
     noAction = false;
-    run("parity", program.workdir);
+    run("parity", program.workdir, program.networkId);
   });
 
 program
@@ -29,11 +33,11 @@ program
   .description("Run a Geth development node.")
   .action(cmd => {
     noAction = false;
-    run("geth", program.workdir);
+    run("geth", program.workdir, program.networkId);
   });
 
 program.parse(process.argv);
 
 if (noAction) {
-  run("geth", program.workdir);
+  run("geth", program.workdir, program.networkId);
 }
