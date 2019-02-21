@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const { numberToHex } = require("web3-utils");
 const { getKeypairs } = require("./crypto");
 
 const HOMEDIR = path.join(require("os").homedir(), ".ethnode");

@@ -2,14 +2,10 @@
 
 const os = require("os");
 const fs = require("fs");
-const { join, sep } = require("path");
-const { spawnSync } = require("child_process");
+const { sep } = require("path");
 const program = require("commander");
 const run = require("./main");
 const packageJson = require("./package.json");
-
-const HOMEDIR = join(require("os").homedir(), ".ethnode");
-const PARITY_BIN = join(HOMEDIR, "parity");
 
 var noAction = true;
 
