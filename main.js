@@ -57,7 +57,7 @@ function generateBalances(keypairs, balance) {
   return balances;
 }
 
-function setup(client, workdir) {
+function downloadClient(client, workdir) {
   const paths = getPaths(client, workdir);
   if (!fs.existsSync(paths.binary)) {
     console.log(`Download latest ${client} version, please wait.`);
@@ -108,9 +108,12 @@ function provide(client, workdir) {
   }
 }
 
-function run(client, workdir) {
+function run(client, { download, workdir }) {
   const paths = getPaths(client, workdir);
-  setup(client, workdir);
+  downloadClient(client, workdir);
+  if (download) {
+    return;
+  }
   if (!fs.existsSync(paths.genesis)) {
     provide(client, workdir);
   }

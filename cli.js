@@ -9,17 +9,16 @@ const packageJson = require("./package.json");
 
 var noAction = true;
 
-function workdir() {
-  if (program.workdir) {
-    return program.workdir;
-  } else {
-    const tmpDir = os.tmpdir();
-    return fs.mkdtempSync(`${tmpDir}${sep}`);
-  }
+function getOptions(program) {
+  return {
+    workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
+    download: program.download
+  };
 }
 
 program
   .version(packageJson.version)
+  .option("-d, --download", "Download the Ethereum client and exit.")
   .option("-w, --workdir <dir>", "Specify a working dir.");
 
 program.version(packageJson.version);
@@ -29,7 +28,7 @@ program
   .description("Run a Parity development node.")
   .action(cmd => {
     noAction = false;
-    run("parity", workdir());
+    run("parity", getOptions(program));
   });
 
 program
@@ -37,11 +36,11 @@ program
   .description("Run a Geth development node.")
   .action(cmd => {
     noAction = false;
-    run("geth", workdir());
+    run("geth", getOptions(program));
   });
 
 program.parse(process.argv);
 
 if (noAction) {
-  run("geth", workdir());
+  run("geth", getOptions(program));
 }
