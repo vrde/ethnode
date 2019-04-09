@@ -1,10 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const findCacheDir = require("find-cache-dir");
 const { getKeypairs } = require("./crypto");
 
-const HOMEDIR = path.join(require("os").homedir(), ".ethnode");
 const KEYS_SOURCE = path.join(__dirname, "keys");
+const HOMEDIR = findCacheDir({
+  name: "ethnode",
+  cwd: __dirname,
+  create: true
+});
 
 function randomId() {
   return 1e9 + Math.round(Math.random() * 1e9);
@@ -54,15 +59,12 @@ function generateBalances(keypairs, balance) {
 
 function setup(client, workdir) {
   const paths = getPaths(client, workdir);
-  try {
-    fs.mkdirSync(HOMEDIR);
-  } catch (err) {
-    if (err.code !== "EEXIST") throw err;
-  }
-
   if (!fs.existsSync(paths.binary)) {
     console.log(`Download latest ${client} version, please wait.`);
-    spawnSync(path.join(__dirname, `get_${client}.sh`), { stdio: "inherit" });
+    spawnSync(path.join(__dirname, `get_${client}.sh`), {
+      env: { HOMEDIR },
+      stdio: "inherit"
+    });
   }
 }
 

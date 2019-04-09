@@ -2,7 +2,8 @@
 # This is a modified version of https://get.parity.io/, Copyright 2015-2018
 # Parity Technologies (UK) Ltd.
 
-ETHNODE_HOME=${HOME}/.ethnode
+# Note: $HOMEDIR is defined in main.js, check it out
+
 ORIGINAL_SOURCE=$(curl -s https://get.parity.io/)
 VERSION_STABLE=$(echo "${ORIGINAL_SOURCE}" | grep 'VERSION_STABLE=' | grep -oE '[0-9.]+')
 VERSION_BETA=$(echo "${ORIGINAL_SOURCE}" | grep 'VERSION_BETA=' | grep -oE '[0-9.]+')
@@ -45,8 +46,8 @@ install() {
   TMPDIR=$(mktemp -d) && cd $TMPDIR
   curl -S -O $DOWNLOAD_FILE
   check_sha256
-  mkdir -p ${ETHNODE_HOME}
-  cp $TMPDIR/parity ${ETHNODE_HOME} && chmod +x ${ETHNODE_HOME}/parity
+  mkdir -p ${HOMEDIR}
+  cp $TMPDIR/parity ${HOMEDIR} && chmod +x ${HOMEDIR}/parity
 }
 
 check_sha256() {
