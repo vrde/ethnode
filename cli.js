@@ -12,14 +12,19 @@ var noAction = true;
 function getOptions(program) {
   return {
     workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
-    download: program.download
+    download: program.download,
+    logging: program.logging
   };
 }
 
 program
   .version(packageJson.version)
   .option("-d, --download", "Download the Ethereum client and exit.")
-  .option("-w, --workdir <dir>", "Specify a working dir.");
+  .option("-w, --workdir <dir>", "Specify a working dir.")
+  .option(
+    "-l, --logging <level>",
+    "Specify logging level (error, warn, info)."
+  );
 
 program.version(packageJson.version);
 

@@ -10,6 +10,7 @@ const HOMEDIR = findCacheDir({
   cwd: __dirname,
   create: true
 });
+const LOGLEVELS = [, "warn", "info", "debug"];
 
 function randomId() {
   return 1e9 + Math.round(Math.random() * 1e9);
@@ -108,7 +109,7 @@ function provide(client, workdir) {
   }
 }
 
-function run(client, { download, workdir }) {
+function run(client, { download, workdir, logging }) {
   const paths = getPaths(client, workdir);
   downloadClient(client, workdir);
   if (download) {
@@ -130,7 +131,6 @@ function run(client, { download, workdir }) {
   for (var i = 0; i < keypairs.length; i++) {
     console.log(`${i}: ${keypairs[i].address} ${keypairs[i].privateKey}`);
   }
-  console.log("\n");
 
   let args;
   if (client === "geth") {
@@ -171,6 +171,10 @@ function run(client, { download, workdir }) {
       "--networkid",
       genesis.config.chainId
     ];
+    if (logging) {
+      args.push("--verbosity");
+      args.push(LOGLEVELS.indexOf(logging));
+    }
   } else if (client === "parity") {
     args = [
       "--db-path",
@@ -197,11 +201,17 @@ function run(client, { download, workdir }) {
       "--network-id",
       parseInt(genesis.params.networkID, 16)
     ];
+    if (logging) {
+      args.push("--logging");
+      args.push(logging);
+    }
   } else {
     throw `Client "${client}" is not supported`;
   }
 
-  console.log("running:", paths.binary, args.join(" "));
+  if (logging === "debug") {
+    console.log("running:", paths.binary, args.join(" "));
+  }
   spawnSync(paths.binary, args, { stdio: "inherit" });
 }
 
