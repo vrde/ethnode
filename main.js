@@ -47,11 +47,11 @@ function generateGenesis(client, balances) {
   return genesis;
 }
 
-function generateBalances(keypairs, balance) {
+function generateBalances(addresses, balance) {
   balance = balance || "100000000000000000000";
   const balances = {};
-  for (var i = 0; i < keypairs.length; i++) {
-    balances[keypairs[i].address] = {
+  for (var i = 0; i < addresses.length; i++) {
+    balances[addresses[i]] = {
       balance: balance
     };
   }
@@ -69,10 +69,13 @@ function downloadClient(client, workdir) {
   }
 }
 
-function provide(client, workdir) {
+function provide(client, workdir, allocate) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
-  const genesis = generateGenesis(client, generateBalances(keypairs));
+  const balances = generateBalances(
+    keypairs.map(x => x.address).concat(allocate)
+  );
+  const genesis = generateGenesis(client, balances);
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
 
@@ -109,14 +112,14 @@ function provide(client, workdir) {
   }
 }
 
-function run(client, { download, workdir, logging }) {
+function run(client, { download, workdir, logging, allocate }) {
   const paths = getPaths(client, workdir);
   downloadClient(client, workdir);
   if (download) {
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir);
+    provide(client, workdir, allocate);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
@@ -128,9 +131,18 @@ function run(client, { download, workdir, logging }) {
   console.log("Run development node using configuration in", workdir);
   console.log("Test accounts");
   console.log("#  Address                                    Private Key");
-  for (var i = 0; i < keypairs.length; i++) {
+  for (let i = 0; i < keypairs.length; i++) {
     console.log(`${i}: ${keypairs[i].address} ${keypairs[i].privateKey}`);
   }
+  if (allocate.length > 0) {
+    console.log();
+    console.log("Extra account allocations");
+    console.log("Address                                    Private Key");
+    for (let i = 0; i < allocate.length; i++) {
+      console.log(`${allocate[i]} <no private key available>`);
+    }
+  }
+  console.log();
 
   let args;
   if (client === "geth") {

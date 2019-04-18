@@ -18,6 +18,22 @@ ethnode
 
 By default `ethnode` runs `geth`. If you want to run `parity` type `ethnode parity`.
 
+# Examples
+
+## Start ethnode and store the data in a specific directory
+Every time you run `ethnode`, it creates a new temporary directory to store the data. If you want to persist the data across
+```
+ethnode --workdir=mydata
+```
+
+## Start ethnode and allocate 100ETH to one or more target addresses
+Sometimes you want to allocate Ether to some specific addresses (maybe some other accounts you have on MetaMask). This is an alternative approach to import a private key to your MetaMask extension.
+```
+ethnode --allocate=0xad7b5e515e557b2dc4d0625d206394b502412003,0xecdd5b467e38731bfad4bd75faa45c7d58e41b49
+```
+
+## Start
+
 ## FAQ
 ### Why not just running `parity --config dev`?
 Parity has a nice feature to run it as a [private development chain][parity:devchain] (aka *test RPC*).

@@ -13,7 +13,8 @@ function getOptions(program) {
   return {
     workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
     download: program.download,
-    logging: program.logging
+    logging: program.logging,
+    allocate: program.allocate
   };
 }
 
@@ -21,9 +22,13 @@ program
   .version(packageJson.version)
   .option("-d, --download", "Download the Ethereum client and exit.")
   .option("-w, --workdir <dir>", "Specify a working dir.")
+  .option("-l, --logging <level>", "Specify logging level (error, warn, info).")
+  .option("-w, --workdir <dir>", "Specify a working dir.")
   .option(
-    "-l, --logging <level>",
-    "Specify logging level (error, warn, info)."
+    "-a, --allocate <addresses>",
+    "Comma separated list of addresses. Allocate 100 Ethers for each address.",
+    val => val.split(","),
+    []
   );
 
 program.version(packageJson.version);
