@@ -21,7 +21,7 @@ By default `ethnode` runs `geth`. If you want to run `parity` type `ethnode pari
 # Examples
 
 ## Start ethnode and store the data in a specific directory
-Every time you run `ethnode`, it creates a new temporary directory to store the data. If you want to persist the data across
+Every time you run `ethnode`, it creates a new temporary directory to store the data. If you want to persist the data in a specific directory use:
 ```
 ethnode --workdir=mydata
 ```
