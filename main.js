@@ -16,6 +16,22 @@ function randomId() {
   return 1e9 + Math.round(Math.random() * 1e9);
 }
 
+function canWrite(path) {
+  let fd;
+  try {
+    fd = fs.openSync(path, "wx");
+  } catch (e) {
+    if (e.code === "EACCES") {
+      return false;
+    } else {
+      throw e;
+    }
+  }
+  fs.closeSync(fd);
+  fs.unlinkSync(path);
+  return true;
+}
+
 function getPaths(client, workdir) {
   const base = path.join(workdir, client);
   return {
@@ -59,7 +75,17 @@ function generateBalances(addresses, balance) {
 }
 
 function downloadClient(client, workdir) {
+  console.log(HOMEDIR);
   const paths = getPaths(client, workdir);
+  if (!canWrite(path.join(HOMEDIR, "__remove_me__"))) {
+    console.log(
+      `Cannot write in ${HOMEDIR}, try run "sudo ethnode -d" to ` +
+        `download ${client}. Remember you can run ethnode without "sudo" ` +
+        `after this operation.`
+    );
+    process.exit(1);
+  }
+
   if (!fs.existsSync(paths.binary)) {
     console.log(`Download latest ${client} version, please wait.`);
     spawnSync(path.join(__dirname, `get_${client}.sh`), {
