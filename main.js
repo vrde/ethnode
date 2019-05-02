@@ -75,7 +75,6 @@ function generateBalances(addresses, balance) {
 }
 
 function downloadClient(client, workdir) {
-  console.log(HOMEDIR);
   const paths = getPaths(client, workdir);
   if (!canWrite(path.join(HOMEDIR, "__remove_me__"))) {
     console.log(
