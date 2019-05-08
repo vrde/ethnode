@@ -14,7 +14,8 @@ function getOptions(program) {
     workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
     download: program.download,
     logging: program.logging,
-    allocate: program.allocate
+    allocate: program.allocate,
+    execute: program.execute
   };
 }
 
@@ -29,7 +30,11 @@ program
     "Comma separated list of addresses. Allocate 100 Ethers for each address.",
     val => val.split(","),
     []
-  );
+  )
+  .option(
+    "-e, --execute <command>",
+    "Start ethnode, execute command, and exit ethnode (useful for testing)."
+  )
 
 program.version(packageJson.version);
 

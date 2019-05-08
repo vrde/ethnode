@@ -94,7 +94,7 @@ function downloadClient(client, workdir) {
   }
 }
 
-function provide(client, workdir, allocate, loggingOptions) {
+function provide(client, workdir, allocate, execute, loggingOptions) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
   const balances = generateBalances(
@@ -110,7 +110,6 @@ function provide(client, workdir, allocate, loggingOptions) {
   } catch (err) {
     if (err.code !== "EEXIST") throw err;
   }
-  console.log("Init new configuration in", workdir);
 
   fs.writeFileSync(paths.genesis, JSON.stringify(genesis, null, 2));
 
@@ -128,7 +127,7 @@ function provide(client, workdir, allocate, loggingOptions) {
       paths.binary,
       [...loggingOptions, "--datadir", paths.data, "init", paths.genesis],
       {
-        stdio: "inherit"
+        stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit"
       }
     );
     if (childResult.status !== 0) {
@@ -137,7 +136,7 @@ function provide(client, workdir, allocate, loggingOptions) {
   }
 }
 
-function run(client, { download, workdir, logging, allocate }) {
+function run(client, { download, workdir, logging, allocate, execute }) {
   const loggingOptions = logging
     ? client === "geth"
       ? ["--verbosity", LOGLEVELS.indexOf(logging)]
@@ -149,7 +148,7 @@ function run(client, { download, workdir, logging, allocate }) {
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir, allocate, loggingOptions);
+    provide(client, workdir, allocate, execute, loggingOptions);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
@@ -158,21 +157,23 @@ function run(client, { download, workdir, logging, allocate }) {
     "password"
   );
 
-  console.log("Run development node using configuration in", workdir);
-  console.log("Test accounts");
-  console.log("#  Address                                    Private Key");
-  for (let i = 0; i < keypairs.length; i++) {
-    console.log(`${i}: ${keypairs[i].address} ${keypairs[i].privateKey}`);
-  }
-  if (allocate.length > 0) {
-    console.log();
-    console.log("Extra account allocations");
-    console.log("Address                                    Private Key");
-    for (let i = 0; i < allocate.length; i++) {
-      console.log(`${allocate[i]} <no private key available>`);
+  if (!execute) {
+    console.log("Run development node using configuration in", workdir);
+    console.log("Test accounts");
+    console.log("#  Address                                    Private Key");
+    for (let i = 0; i < keypairs.length; i++) {
+      console.log(`${i}: ${keypairs[i].address} ${keypairs[i].privateKey}`);
     }
+    if (allocate.length > 0) {
+      console.log();
+      console.log("Extra account allocations");
+      console.log("Address                                    Private Key");
+      for (let i = 0; i < allocate.length; i++) {
+        console.log(`${allocate[i]} <no private key available>`);
+      }
+    }
+    console.log();
   }
-  console.log();
 
   let args;
   if (client === "geth") {
@@ -248,7 +249,30 @@ function run(client, { download, workdir, logging, allocate }) {
   if (logging === "debug") {
     console.log("running:", paths.binary, args.join(" "));
   }
-  spawn(paths.binary, args, { stdio: "inherit" });
+
+  const clientProcess = spawn(paths.binary, args, {
+    stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit"
+  });
+
+  let executeProcess;
+
+  clientProcess.on("close", code => {
+    if (code !== 0) {
+      console.log("Error executing ethnode. Exit code:", code);
+    }
+    if (executeProcess) {
+      executeProcess.kill();
+    }
+    process.exit(code);
+  });
+
+  if (execute) {
+    executeProcess = spawn(execute, { stdio: "inherit", shell: true });
+    executeProcess.on("close", code => {
+      clientProcess.kill();
+      process.exit(code);
+    });
+  }
 }
 
 module.exports = run;
