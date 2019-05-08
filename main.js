@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 const findCacheDir = require("find-cache-dir");
 const { getKeypairs } = require("./crypto");
 
@@ -94,7 +94,7 @@ function downloadClient(client, workdir) {
   }
 }
 
-function provide(client, workdir, allocate) {
+function provide(client, workdir, allocate, loggingOptions) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
   const balances = generateBalances(
@@ -126,7 +126,7 @@ function provide(client, workdir, allocate) {
   if (client === "geth") {
     const childResult = spawnSync(
       paths.binary,
-      ["--datadir", paths.data, "init", paths.genesis],
+      [...loggingOptions, "--datadir", paths.data, "init", paths.genesis],
       {
         stdio: "inherit"
       }
@@ -138,13 +138,18 @@ function provide(client, workdir, allocate) {
 }
 
 function run(client, { download, workdir, logging, allocate }) {
+  const loggingOptions = logging
+    ? client === "geth"
+      ? ["--verbosity", LOGLEVELS.indexOf(logging)]
+      : ["--logging", logging]
+    : [];
   const paths = getPaths(client, workdir);
   downloadClient(client, workdir);
   if (download) {
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir, allocate);
+    provide(client, workdir, allocate, loggingOptions);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
@@ -206,12 +211,9 @@ function run(client, { download, workdir, logging, allocate }) {
       "--password",
       paths.password,
       "--networkid",
-      genesis.config.chainId
+      genesis.config.chainId,
+      ...loggingOptions
     ];
-    if (logging) {
-      args.push("--verbosity");
-      args.push(LOGLEVELS.indexOf(logging));
-    }
   } else if (client === "parity") {
     args = [
       "--db-path",
@@ -236,12 +238,9 @@ function run(client, { download, workdir, logging, allocate }) {
       "--password",
       paths.password,
       "--network-id",
-      parseInt(genesis.params.networkID, 16)
+      parseInt(genesis.params.networkID, 16),
+      ...loggingOptions
     ];
-    if (logging) {
-      args.push("--logging");
-      args.push(logging);
-    }
   } else {
     throw `Client "${client}" is not supported`;
   }
@@ -249,7 +248,7 @@ function run(client, { download, workdir, logging, allocate }) {
   if (logging === "debug") {
     console.log("running:", paths.binary, args.join(" "));
   }
-  spawnSync(paths.binary, args, { stdio: "inherit" });
+  spawn(paths.binary, args, { stdio: "inherit" });
 }
 
 module.exports = run;
