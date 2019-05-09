@@ -34,7 +34,7 @@ program
   .option(
     "-e, --execute <command>",
     "Start ethnode, execute command, and exit ethnode (useful for testing)."
-  )
+  );
 
 program.version(packageJson.version);
 

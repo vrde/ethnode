@@ -87,10 +87,17 @@ function downloadClient(client, workdir) {
 
   if (!fs.existsSync(paths.binary)) {
     console.log(`Download latest ${client} version, please wait.`);
-    spawnSync(path.join(__dirname, `get_${client}.sh`), {
+    const childResult = spawnSync(path.join(__dirname, `get_${client}.sh`), {
       env: { HOMEDIR },
       stdio: "inherit"
     });
+    if (childResult.status !== 0) {
+      console.log(
+        `Error downloading ${client}, this might be temporary, ` +
+          `try again later.`
+      );
+      process.exit(childResult.status);
+    }
   }
 }
 
@@ -131,6 +138,10 @@ function provide(client, workdir, allocate, execute, loggingOptions) {
       }
     );
     if (childResult.status !== 0) {
+      console.log(
+        `Error running ${paths.binary}, run it manually to check if it ` +
+          `works or not. If it doesn't, remove it and run ethnode again.`
+      );
       process.exit(childResult.status);
     }
   }
