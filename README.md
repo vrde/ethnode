@@ -32,6 +32,13 @@ Sometimes you want to allocate Ether to some specific addresses (maybe some othe
 ethnode --allocate=0xad7b5e515e557b2dc4d0625d206394b502412003,0xecdd5b467e38731bfad4bd75faa45c7d58e41b49
 ```
 
+## Start ethnode to run some tests and then exit
+This is quite handy if you want to have a precommit hook that runs tests before committing, or if you want to integrate with a continuous integration system like travis.
+
+```
+ethnode --execute="truffle test"
+```
+
 ## Start
 
 ## FAQ
