@@ -1,6 +1,6 @@
 {
   "name": "ethnode",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Run an Ethereum node for development.",
   "homepage": "https://github.com/vrde/ethnode",
   "main": "main.js",
@@ -19,7 +19,7 @@
     "request": "^2.88.0",
     "secp256k1": "^3.6.2",
     "tweetnacl": "^1.0.1",
-    "web3": "^1.0.0-beta.41",
-    "web3-utils": "^1.0.0-beta.41"
+    "web3": "^1.2.1",
+    "web3-utils": "^1.2.1"
   }
 }

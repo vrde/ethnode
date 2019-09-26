@@ -216,6 +216,7 @@ function run(client, { download, workdir, logging, allocate, execute }) {
       "94000000",
       "--miner.gasprice",
       "1000000000",
+      "--allow-insecure-unlock",
       "--keystore",
       paths.keys,
       "--unlock",
