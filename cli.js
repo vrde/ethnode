@@ -15,8 +15,17 @@ function getOptions(program) {
     download: program.download,
     logging: program.logging,
     allocate: program.allocate,
+    chainId: program.chainid,
     execute: program.execute
   };
+}
+
+function parseChainId(value) {
+  if (value === "random") {
+    return 1e9 + Math.round(Math.random() * 1e9);
+  } else {
+    return parseInt(value, 10);
+  }
 }
 
 program
@@ -25,6 +34,7 @@ program
   .option("-w, --workdir <dir>", "Specify a working dir.")
   .option("-l, --logging <level>", "Specify logging level (error, warn, info).")
   .option("-w, --workdir <dir>", "Specify a working dir.")
+  .option("-c, --chainid <int>", "Set the chainId (also called network id), can be an int or the string \"random\".", 666666, parseChainId)
   .option(
     "-a, --allocate <addresses>",
     "Comma separated list of addresses. Allocate 100 Ethers for each address.",

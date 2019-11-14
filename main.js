@@ -12,10 +12,6 @@ const HOMEDIR = findCacheDir({
 });
 const LOGLEVELS = [, "warn", "info", "debug"];
 
-function randomId() {
-  return 1e9 + Math.round(Math.random() * 1e9);
-}
-
 function canWrite(path) {
   let fd;
   try {
@@ -44,12 +40,12 @@ function getPaths(client, workdir) {
   };
 }
 
-function generateGenesis(client, balances) {
+function generateGenesis(client, chainId, balances) {
   const genesis = JSON.parse(
     JSON.stringify(require(`./genesis.${client}.json`))
   );
   if (client === "geth") {
-    genesis.config.chainId = randomId();
+    genesis.config.chainId = chainId;
     genesis.extraData =
       "0x" +
       "0".repeat(64) +
@@ -57,7 +53,7 @@ function generateGenesis(client, balances) {
       "0".repeat(130);
     genesis.alloc = { ...genesis.alloc, ...balances };
   } else if (client === "parity") {
-    genesis.params.networkID = randomId();
+    genesis.params.networkID = chainId;
     genesis.accounts = { ...genesis.accounts, ...balances };
   }
   return genesis;
@@ -98,16 +94,19 @@ function downloadClient(client, workdir) {
       );
       process.exit(childResult.status);
     }
+  } else {
+    console.error(`You have downloaded ${client} already, if you want to force the download remove ${paths.binary}`);
+    process.exit(1);
   }
 }
 
-function provide(client, workdir, allocate, execute, loggingOptions) {
+function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
   const paths = getPaths(client, workdir);
   const keypairs = getKeypairs(KEYS_SOURCE, "password");
   const balances = generateBalances(
     keypairs.map(x => x.address).concat(allocate)
   );
-  const genesis = generateGenesis(client, balances);
+  const genesis = generateGenesis(client, chainId, balances);
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
 
@@ -147,7 +146,7 @@ function provide(client, workdir, allocate, execute, loggingOptions) {
   }
 }
 
-function run(client, { download, workdir, logging, allocate, execute }) {
+function run(client, { download, workdir, logging, allocate, chainId, execute }) {
   const loggingOptions = logging
     ? client === "geth"
       ? ["--verbosity", LOGLEVELS.indexOf(logging)]
@@ -159,7 +158,7 @@ function run(client, { download, workdir, logging, allocate, execute }) {
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir, allocate, execute, loggingOptions);
+    provide(client, workdir, allocate, chainId, execute, loggingOptions);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
