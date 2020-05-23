@@ -1,6 +1,6 @@
 {
   "name": "ethnode",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Run an Ethereum node for development.",
   "homepage": "https://github.com/vrde/ethnode",
   "main": "main.js",
@@ -12,14 +12,14 @@
   "author": "vrde",
   "license": "MPL-2.0",
   "dependencies": {
-    "commander": "^2.19.0",
-    "find-cache-dir": "^3.0.0",
+    "commander": "^2.20.3",
+    "find-cache-dir": "^3.3.1",
     "js-sha3": "^0.8.0",
     "keythereum": "^1.0.4",
-    "request": "^2.88.0",
-    "secp256k1": "^3.6.2",
-    "tweetnacl": "^1.0.1",
-    "web3": "^1.2.1",
-    "web3-utils": "^1.2.1"
+    "request": "^2.88.2",
+    "secp256k1": "^3.8.0",
+    "tweetnacl": "^1.0.3",
+    "web3": "^1.2.8",
+    "web3-utils": "^1.2.8"
   }
 }

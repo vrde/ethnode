@@ -52,7 +52,7 @@ function generateGenesis(client, chainId, balances) {
       Object.keys(balances)[0].substr(2) +
       "0".repeat(130);
     genesis.alloc = { ...genesis.alloc, ...balances };
-  } else if (client === "parity") {
+  } else if (client === "openethereum") {
     genesis.params.networkID = chainId;
     genesis.accounts = { ...genesis.accounts, ...balances };
   }
@@ -70,7 +70,7 @@ function generateBalances(addresses, balance) {
   return balances;
 }
 
-function downloadClient(client, workdir) {
+function downloadClient(client, workdir, download) {
   const paths = getPaths(client, workdir);
   if (!canWrite(path.join(HOMEDIR, "__remove_me__"))) {
     console.log(
@@ -94,8 +94,10 @@ function downloadClient(client, workdir) {
       );
       process.exit(childResult.status);
     }
-  } else {
-    console.error(`You have downloaded ${client} already, if you want to force the download remove ${paths.binary}`);
+  } else if (download) {
+    console.error(
+      `You have downloaded ${client} already, if you want to force the download remove ${paths.binary}`
+    );
     process.exit(1);
   }
 }
@@ -146,14 +148,17 @@ function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
   }
 }
 
-function run(client, { download, workdir, logging, allocate, chainId, execute }) {
+function run(
+  client,
+  { download, workdir, logging, allocate, chainId, execute }
+) {
   const loggingOptions = logging
     ? client === "geth"
       ? ["--verbosity", LOGLEVELS.indexOf(logging)]
       : ["--logging", logging]
     : [];
   const paths = getPaths(client, workdir);
-  downloadClient(client, workdir);
+  downloadClient(client, workdir, download);
   if (download) {
     return;
   }
@@ -198,7 +203,7 @@ function run(client, { download, workdir, logging, allocate, chainId, execute })
       "--rpcport",
       "8545",
       "--rpcapi",
-      "personal,db,eth,net,web3,txpool,miner,debug",
+      "personal,eth,net,web3,txpool,miner,debug",
       "--rpccorsdomain",
       "*",
       "--ws",
@@ -207,7 +212,7 @@ function run(client, { download, workdir, logging, allocate, chainId, execute })
       "--wsport",
       "8546",
       "--wsapi",
-      "personal,db,eth,net,web3,txpool,miner,debug",
+      "personal,eth,net,web3,txpool,miner,debug",
       "--wsorigins",
       "*",
       "--mine",
@@ -226,7 +231,7 @@ function run(client, { download, workdir, logging, allocate, chainId, execute })
       genesis.config.chainId,
       ...loggingOptions
     ];
-  } else if (client === "parity") {
+  } else if (client === "openethereum") {
     args = [
       "--db-path",
       paths.data,
