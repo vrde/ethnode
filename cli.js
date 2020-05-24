@@ -34,7 +34,12 @@ program
   .option("-w, --workdir <dir>", "Specify a working dir.")
   .option("-l, --logging <level>", "Specify logging level (error, warn, info).")
   .option("-w, --workdir <dir>", "Specify a working dir.")
-  .option("-c, --chainid <int>", "Set the chainId (also called network id), can be an int or the string \"random\".", 666666, parseChainId)
+  .option(
+    "-c, --chainid <int>",
+    'Set the chainId (also called network id), can be an int or the string "random".',
+    666666,
+    parseChainId
+  )
   .option(
     "-a, --allocate <addresses>",
     "Comma separated list of addresses. Allocate 100 Ethers for each address.",
@@ -49,11 +54,11 @@ program
 program.version(packageJson.version);
 
 program
-  .command("parity")
-  .description("Run a Parity development node.")
+  .command("openethereum")
+  .description("Run an Openethereum development node.")
   .action(cmd => {
     noAction = false;
-    run("parity", getOptions(program));
+    run("openethereum", getOptions(program));
   });
 
 program
