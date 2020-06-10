@@ -1,28 +1,27 @@
 const fs = require("fs");
 const path = require("path");
+const ethers = require("ethers");
 
-const secp256k1 = require("secp256k1");
-const keythereum = require("keythereum");
-const { sha3, bytesToHex } = require("web3-utils");
-
-function getKeypair(keyObject, password) {
-  const privateKey = keythereum.recover(password, keyObject);
-  const publicKey = secp256k1.publicKeyCreate(privateKey, false).slice(1, 65);
+async function getKeypair(json, password) {
+  const wallet = await ethers.Wallet.fromEncryptedJson(json, password);
   return {
-    address: "0x" + sha3(bytesToHex(publicKey)).slice(-40),
-    privateKey: bytesToHex(privateKey)
+    address: wallet.address,
+    privateKey: wallet.privateKey,
   };
 }
 
-function getKeypairs(keysDir, password) {
-  return fs
-    .readdirSync(keysDir)
-    .filter(filename => filename.startsWith("UTC--"))
-    .map(filename => JSON.parse(fs.readFileSync(path.join(keysDir, filename))))
-    .map(keyObject => getKeypair(keyObject, password));
+async function getKeypairs(keysDir, password) {
+  const result = [];
+  for (let filename of fs.readdirSync(keysDir)) {
+    if (filename.startsWith("UTC--")) {
+      const content = fs.readFileSync(path.join(keysDir, filename), "utf8");
+      result.push(await getKeypair(content, password));
+    }
+  }
+  return result;
 }
 
 module.exports = {
   getKeypair: getKeypair,
-  getKeypairs: getKeypairs
+  getKeypairs: getKeypairs,
 };

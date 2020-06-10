@@ -13,13 +13,7 @@
   "license": "MPL-2.0",
   "dependencies": {
     "commander": "^2.20.3",
-    "find-cache-dir": "^3.3.1",
-    "js-sha3": "^0.8.0",
-    "keythereum": "^1.0.4",
-    "request": "^2.88.2",
-    "secp256k1": "^3.8.0",
-    "tweetnacl": "^1.0.3",
-    "web3": "^1.2.8",
-    "web3-utils": "^1.2.8"
+    "ethers": "^4.0.47",
+    "find-cache-dir": "^3.3.1"
   }
 }

@@ -37,8 +37,8 @@ program
   .option(
     "-c, --chainid <int>",
     'Set the chainId (also called network id), can be an int or the string "random".',
-    666666,
-    parseChainId
+    parseChainId,
+    666666
   )
   .option(
     "-a, --allocate <addresses>",

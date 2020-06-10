@@ -8,7 +8,7 @@ const KEYS_SOURCE = path.join(__dirname, "keys");
 const HOMEDIR = findCacheDir({
   name: "ethnode",
   cwd: __dirname,
-  create: true
+  create: true,
 });
 const LOGLEVELS = [, "warn", "info", "debug"];
 
@@ -36,7 +36,7 @@ function getPaths(client, workdir) {
     genesis: path.join(base, "genesis.json"),
     data: path.join(base, "data"),
     keys: path.join(base, "keys"),
-    password: path.join(__dirname, "keys", "password.secret")
+    password: path.join(__dirname, "keys", "password.secret"),
   };
 }
 
@@ -64,7 +64,7 @@ function generateBalances(addresses, balance) {
   const balances = {};
   for (var i = 0; i < addresses.length; i++) {
     balances[addresses[i]] = {
-      balance: balance
+      balance: balance,
     };
   }
   return balances;
@@ -85,7 +85,7 @@ function downloadClient(client, workdir, download) {
     console.log(`Download latest ${client} version, please wait.`);
     const childResult = spawnSync(path.join(__dirname, `get_${client}.sh`), {
       env: { HOMEDIR },
-      stdio: "inherit"
+      stdio: "inherit",
     });
     if (childResult.status !== 0) {
       console.log(
@@ -102,11 +102,18 @@ function downloadClient(client, workdir, download) {
   }
 }
 
-function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
+async function provide(
+  client,
+  workdir,
+  allocate,
+  chainId,
+  execute,
+  loggingOptions
+) {
   const paths = getPaths(client, workdir);
-  const keypairs = getKeypairs(KEYS_SOURCE, "password");
+  const keypairs = await getKeypairs(KEYS_SOURCE, "password");
   const balances = generateBalances(
-    keypairs.map(x => x.address).concat(allocate)
+    keypairs.map((x) => x.address).concat(allocate)
   );
   const genesis = generateGenesis(client, chainId, balances);
   let keysDest =
@@ -122,8 +129,8 @@ function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
   fs.writeFileSync(paths.genesis, JSON.stringify(genesis, null, 2));
 
   fs.readdirSync(KEYS_SOURCE)
-    .filter(filename => filename.startsWith("UTC--"))
-    .map(filename =>
+    .filter((filename) => filename.startsWith("UTC--"))
+    .map((filename) =>
       fs.copyFileSync(
         path.join(KEYS_SOURCE, filename),
         path.join(keysDest, filename)
@@ -135,7 +142,7 @@ function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
       paths.binary,
       [...loggingOptions, "--datadir", paths.data, "init", paths.genesis],
       {
-        stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit"
+        stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit",
       }
     );
     if (childResult.status !== 0) {
@@ -148,7 +155,7 @@ function provide(client, workdir, allocate, chainId, execute, loggingOptions) {
   }
 }
 
-function run(
+async function run(
   client,
   { download, workdir, logging, allocate, chainId, execute }
 ) {
@@ -163,11 +170,11 @@ function run(
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    provide(client, workdir, allocate, chainId, execute, loggingOptions);
+    await provide(client, workdir, allocate, chainId, execute, loggingOptions);
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
-  const keypairs = getKeypairs(
+  const keypairs = await getKeypairs(
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name),
     "password"
   );
@@ -224,12 +231,12 @@ function run(
       "--keystore",
       paths.keys,
       "--unlock",
-      keypairs.map(keypair => keypair.address).join(","),
+      keypairs.map((keypair) => keypair.address).join(","),
       "--password",
       paths.password,
       "--networkid",
       genesis.config.chainId,
-      ...loggingOptions
+      ...loggingOptions,
     ];
   } else if (client === "openethereum") {
     args = [
@@ -251,12 +258,12 @@ function run(
       "all",
       "--fast-unlock",
       "--unlock",
-      keypairs.map(keypair => keypair.address).join(","),
+      keypairs.map((keypair) => keypair.address).join(","),
       "--password",
       paths.password,
       "--network-id",
       parseInt(genesis.params.networkID, 16),
-      ...loggingOptions
+      ...loggingOptions,
     ];
   } else {
     throw `Client "${client}" is not supported`;
@@ -267,12 +274,12 @@ function run(
   }
 
   const clientProcess = spawn(paths.binary, args, {
-    stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit"
+    stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit",
   });
 
   let executeProcess;
 
-  clientProcess.on("close", code => {
+  clientProcess.on("close", (code) => {
     if (code !== 0) {
       console.log("Error executing ethnode. Exit code:", code);
     }
@@ -284,7 +291,7 @@ function run(
 
   if (execute) {
     executeProcess = spawn(execute, { stdio: "inherit", shell: true });
-    executeProcess.on("close", code => {
+    executeProcess.on("close", (code) => {
       clientProcess.kill();
       process.exit(code);
     });
