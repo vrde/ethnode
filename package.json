@@ -1,6 +1,6 @@
 {
   "name": "ethnode",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Run an Ethereum node for development.",
   "homepage": "https://github.com/vrde/ethnode",
   "main": "main.js",
