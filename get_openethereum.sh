@@ -7,7 +7,7 @@ HOMEDIR=${HOMEDIR:-"."}
 
 PLATFORM=$(uname | tr '[:upper:]' '[:lower:]')
 DIST=$([ "${PLATFORM}" == "darwin" ] && echo "macos" || echo "linux")
-DOWNLOAD_URL="https://github.com/openethereum/openethereum/releases/download/v3.0.0/openethereum-${DIST}-v3.0.0.zip"
+DOWNLOAD_URL="https://github.com/openethereum/openethereum/releases/download/v3.0.1/openethereum-${DIST}-v3.0.1.zip"
 TMP_DIR=$(mktemp -d)
 TMP_ZIP="${TMP_DIR}/openethereum.zip"
 

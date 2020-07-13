@@ -1,5 +1,3 @@
-Warning: this tool is experimental. It should work for GNU/Linux and hopefully on Mac OS.
-
 # `ethnode`, run an Ethereum node for test and development
 `ethnode` is a **zero configuration** tool to run a local Ethereum node. It supports both [Openethereum][openethereum] and [Geth][geth].
 
