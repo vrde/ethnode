@@ -3,11 +3,9 @@
 const os = require("os");
 const fs = require("fs");
 const { sep } = require("path");
-const program = require("commander");
+const { program, CommanderError } = require("commander");
 const run = require("./main");
 const packageJson = require("./package.json");
-
-var noAction = true;
 
 function getOptions(program) {
   return {
@@ -16,7 +14,7 @@ function getOptions(program) {
     logging: program.logging,
     allocate: program.allocate,
     chainId: program.chainid,
-    execute: program.execute
+    execute: program.execute,
   };
 }
 
@@ -43,7 +41,7 @@ program
   .option(
     "-a, --allocate <addresses>",
     "Comma separated list of addresses. Allocate 100 Ethers for each address.",
-    val => val.split(","),
+    (val) => val.split(","),
     []
   )
   .option(
@@ -56,21 +54,15 @@ program.version(packageJson.version);
 program
   .command("openethereum")
   .description("Run an Openethereum development node.")
-  .action(cmd => {
-    noAction = false;
+  .action((cmd) => {
     run("openethereum", getOptions(program));
   });
 
 program
-  .command("geth")
+  .command("geth", { isDefault: true })
   .description("Run a Geth development node.")
-  .action(cmd => {
-    noAction = false;
+  .action((cmd) => {
     run("geth", getOptions(program));
   });
 
 program.parse(process.argv);
-
-if (noAction) {
-  run("geth", getOptions(program));
-}
