@@ -31,7 +31,6 @@ program
   .option("-d, --download", "Download the Ethereum client and exit.")
   .option("-w, --workdir <dir>", "Specify a working dir.")
   .option("-l, --logging <level>", "Specify logging level (error, warn, info).")
-  .option("-w, --workdir <dir>", "Specify a working dir.")
   .option(
     "-c, --chainid <int>",
     'Set the chainId (also called network id), can be an int or the string "random".',
