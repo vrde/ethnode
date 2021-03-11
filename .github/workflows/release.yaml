@@ -13,5 +13,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: rkachowski/ethnode
+          repository: rkachowski/ethnode/ethnode
           tag_with_ref: true
