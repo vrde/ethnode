@@ -1,7 +1,8 @@
-FROM node:10.18.1-stretch
+FROM node:15.11.0-alpine3.10
 
 WORKDIR /home/node
 
+RUN apk add curl
 COPY . .
 
 #post install geth package for platform
