@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Push to GitHub Packages
+      - name: Push to GitHub GitHub Container Registry
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
