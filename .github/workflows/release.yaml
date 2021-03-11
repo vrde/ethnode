@@ -1,12 +1,12 @@
 name: Publish Docker image
-on: 
+on:
   push:
-    branches: 
+    branches:
       - master
       - main
 jobs:
   push_to_registry:
-    name: Push Docker image to GitHub Packages
+    name: Push Docker image to GitHub Container Registry
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -17,5 +17,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
-          repository: ${{ github.repository}}/ethnode
+          repository: ${{ github.repository}}
           tag_with_ref: true
