@@ -7,6 +7,11 @@ npm install -g ethnode
 ethnode
 ```
 
+Or docker:
+```
+docker run -it ghcr.io/vrde/ethnode:latest
+```
+
 `ethnode` automatically:
 - downloads the latest stable version of `geth` or `openethereum`
 - configures `geth` or `openethereum` to run in a single node network using the *clique* (Geth) or *InstantSeal* (Openethereum) consensus engine (transactions are processed **instantly**)
