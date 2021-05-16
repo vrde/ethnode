@@ -48,8 +48,6 @@ program
     "Start ethnode, execute command, and exit ethnode (useful for testing)."
   );
 
-program.version(packageJson.version);
-
 program
   .command("openethereum")
   .description("Run an Openethereum development node.")
