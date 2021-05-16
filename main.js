@@ -157,7 +157,7 @@ async function provide(
 
 async function run(
   client,
-  { download, workdir, logging, allocate, chainId, execute }
+  { download, workdir, logging, allocate, chainId, execute, nodeArguments }
 ) {
   const loggingOptions = logging
     ? client === "geth"
@@ -268,6 +268,8 @@ async function run(
   } else {
     throw `Client "${client}" is not supported`;
   }
+
+  if (nodeArguments) args.push(nodeArguments);
 
   if (logging === "debug") {
     console.log("running:", paths.binary, args.join(" "));

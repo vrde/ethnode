@@ -15,6 +15,7 @@ function getOptions(program) {
     allocate: program.allocate,
     chainId: program.chainid,
     execute: program.execute,
+    nodeArguments: program.nodeArguments
   };
 }
 
@@ -46,6 +47,10 @@ program
   .option(
     "-e, --execute <command>",
     "Start ethnode, execute command, and exit ethnode (useful for testing)."
+  )
+  .option(
+    "--node-arguments <args>",
+    "Arguments that are passed directly to ethnode's underlying Ethereum node."
   );
 
 program.version(packageJson.version);
