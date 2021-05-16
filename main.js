@@ -269,7 +269,7 @@ async function run(
     throw `Client "${client}" is not supported`;
   }
 
-  args.push(nodeArguments);
+  if (nodeArguments) args.push(nodeArguments);
 
   if (logging === "debug") {
     console.log("running:", paths.binary, args.join(" "));
