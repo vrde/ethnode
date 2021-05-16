@@ -53,8 +53,6 @@ program
     "Arguments that are passed directly to ethnode's underlying Ethereum node."
   );
 
-program.version(packageJson.version);
-
 program
   .command("openethereum")
   .description("Run an Openethereum development node.")
