@@ -1,7 +1,7 @@
 FROM node:15.11-buster-slim
 
 RUN apt-get update && apt-get install -y \
-    curl \
+    curl unzip \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/node
