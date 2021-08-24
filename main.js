@@ -112,9 +112,10 @@ async function provide(
 ) {
   const paths = getPaths(client, workdir);
   const keypairs = await getKeypairs(KEYS_SOURCE, "password");
-  const balances = generateBalances(
+  let balances = generateBalances(
     keypairs.map((x) => x.address).concat(allocate)
   );
+  
   const genesis = generateGenesis(client, chainId, balances);
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);

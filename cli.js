@@ -57,14 +57,14 @@ program
   .command("openethereum")
   .description("Run an Openethereum development node.")
   .action((cmd) => {
-    run("openethereum", getOptions(program));
+    run("openethereum", getOptions(program.opts()));
   });
 
 program
   .command("geth", { isDefault: true })
   .description("Run a Geth development node.")
   .action((cmd) => {
-    run("geth", getOptions(program));
+    run("geth", getOptions(program.opts()));
   });
 
 program.parse(process.argv);

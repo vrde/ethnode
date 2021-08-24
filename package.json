@@ -1,6 +1,6 @@
 {
   "name": "ethnode",
-  "version": "0.0.24",
+  "version": "0.1.0",
   "description": "Run an Ethereum node for development.",
   "homepage": "https://github.com/vrde/ethnode",
   "main": "main.js",
@@ -12,8 +12,8 @@
   "author": "vrde",
   "license": "MPL-2.0",
   "dependencies": {
-    "commander": "^6.2.0",
-    "ethers": "^5.0.19",
+    "commander": "^8.1.0",
+    "ethers": "^5.4.5",
     "find-cache-dir": "^3.3.1"
   }
 }
