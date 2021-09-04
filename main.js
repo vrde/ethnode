@@ -115,7 +115,7 @@ async function provide(
   let balances = generateBalances(
     keypairs.map((x) => x.address).concat(allocate)
   );
-  
+
   const genesis = generateGenesis(client, chainId, balances);
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
@@ -201,6 +201,7 @@ async function run(
   let args;
   if (client === "geth") {
     args = [
+      "--nodiscover",
       "--datadir",
       paths.data,
       "--port",
@@ -241,6 +242,7 @@ async function run(
     ];
   } else if (client === "openethereum") {
     args = [
+      "--no-discovery",
       "--db-path",
       paths.data,
       "--chain",
