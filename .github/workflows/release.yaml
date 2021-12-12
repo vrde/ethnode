@@ -2,20 +2,19 @@ name: Publish Docker image
 on:
   push:
     branches:
-      - master
-      - main
+      - fix/nodeArguments
 jobs:
   push_to_registry:
-    name: Push Docker image to GitHub Container Registry
+    name: Push Docker image to Registry
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Push to GitHub GitHub Container Registry
+      - name: Push to Registry
         uses: docker/build-push-action@v1
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: registry.abraham.fun
           repository: ${{ github.repository}}
           tag_with_ref: true
