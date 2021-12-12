@@ -49,7 +49,7 @@ program
     "Start ethnode, execute command, and exit ethnode (useful for testing)."
   )
   .option(
-    "--node-arguments <args>",
+    "--node-arguments <args...>",
     "Arguments that are passed directly to ethnode's underlying Ethereum node."
   );
 
