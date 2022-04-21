@@ -15,6 +15,6 @@ jobs:
         with:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-          registry: registry.abraham.fun
+          registry: registry.aws.abraham.fun
           repository: ${{ github.repository}}
           tag_with_ref: true
