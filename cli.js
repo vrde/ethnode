@@ -10,12 +10,13 @@ const packageJson = require("./package.json");
 function getOptions(program) {
   return {
     workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
+    port: program.port,
     download: program.download,
     logging: program.logging,
     allocate: program.allocate,
     chainId: program.chainid,
     execute: program.execute,
-    nodeArguments: program.nodeArguments
+    nodeArguments: program.nodeArguments,
   };
 }
 
@@ -31,6 +32,12 @@ program
   .version(packageJson.version)
   .option("-d, --download", "Download the Ethereum client and exit.")
   .option("-w, --workdir <dir>", "Specify a working dir.")
+  .option(
+    "-p, --port <port>",
+    "Specify the JSONRPC port.",
+    (v) => parseInt(v, 10),
+    8545
+  )
   .option("-l, --logging <level>", "Specify logging level (error, warn, info).")
   .option(
     "-c, --chainid <int>",

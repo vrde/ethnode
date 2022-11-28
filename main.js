@@ -158,7 +158,16 @@ async function provide(
 
 async function run(
   client,
-  { download, workdir, logging, allocate, chainId, execute, nodeArguments }
+  {
+    download,
+    workdir,
+    port,
+    logging,
+    allocate,
+    chainId,
+    execute,
+    nodeArguments,
+  }
 ) {
   const loggingOptions = logging
     ? client === "geth"
@@ -208,16 +217,16 @@ async function run(
       "30311",
       "--http",
       "--http.addr",
-      "localhost",
+      "0.0.0.0",
       "--http.port",
-      "8545",
+      port,
       "--http.api",
       "personal,eth,net,web3,txpool,miner,debug",
       "--http.corsdomain",
       "*",
       "--ws",
       "--ws.addr",
-      "localhost",
+      "0.0.0.0",
       "--ws.port",
       "8546",
       "--ws.api",
@@ -245,6 +254,8 @@ async function run(
       "--no-discovery",
       "--db-path",
       paths.data,
+      "--jsonrpc-port",
+      port,
       "--chain",
       paths.genesis,
       "--keys-path",
