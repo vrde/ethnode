@@ -11,6 +11,7 @@ function getOptions(program) {
   return {
     workdir: program.workdir || fs.mkdtempSync(`${os.tmpdir()}${sep}`),
     port: program.port,
+    period: program.period,
     download: program.download,
     logging: program.logging,
     allocate: program.allocate,
@@ -32,6 +33,12 @@ program
   .version(packageJson.version)
   .option("-d, --download", "Download the Ethereum client and exit.")
   .option("-w, --workdir <dir>", "Specify a working dir.")
+  .option(
+    "--period <number>",
+    "Block period in secods, 0 = mine only if transaction pending",
+    (v) => parseInt(v, 10),
+    0
+  )
   .option(
     "-p, --port <port>",
     "Specify the JSONRPC port.",

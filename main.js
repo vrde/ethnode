@@ -40,7 +40,7 @@ function getPaths(client, workdir) {
   };
 }
 
-function generateGenesis(client, chainId, balances) {
+function generateGenesis(client, chainId, balances, period) {
   const genesis = JSON.parse(
     JSON.stringify(require(`./genesis.${client}.json`))
   );
@@ -52,6 +52,7 @@ function generateGenesis(client, chainId, balances) {
       Object.keys(balances)[0].substr(2) +
       "0".repeat(130);
     genesis.alloc = { ...genesis.alloc, ...balances };
+    genesis.config.clique.period = period;
   } else if (client === "openethereum") {
     genesis.params.networkID = chainId;
     genesis.accounts = { ...genesis.accounts, ...balances };
@@ -108,6 +109,7 @@ async function provide(
   allocate,
   chainId,
   execute,
+  period,
   loggingOptions
 ) {
   const paths = getPaths(client, workdir);
@@ -116,7 +118,7 @@ async function provide(
     keypairs.map((x) => x.address).concat(allocate)
   );
 
-  const genesis = generateGenesis(client, chainId, balances);
+  const genesis = generateGenesis(client, chainId, balances, period);
   let keysDest =
     client === "geth" ? paths.keys : path.join(paths.keys, genesis.name);
 
@@ -166,6 +168,7 @@ async function run(
     allocate,
     chainId,
     execute,
+    period,
     nodeArguments,
   }
 ) {
@@ -180,7 +183,15 @@ async function run(
     return;
   }
   if (!fs.existsSync(paths.genesis)) {
-    await provide(client, workdir, allocate, chainId, execute, loggingOptions);
+    await provide(
+      client,
+      workdir,
+      allocate,
+      chainId,
+      execute,
+      period,
+      loggingOptions
+    );
   }
 
   const genesis = JSON.parse(fs.readFileSync(paths.genesis));
